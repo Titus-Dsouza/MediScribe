@@ -17,16 +17,16 @@ Users answer a series of easy medical questions. Google Gemini processes their r
 ## Phase 1 — Project Setup & Environment
 
 - [ ] Create a clean project structure.
-- [ ] Set up HTML, CSS and JavaScript frontend.
+- [x] Set up HTML, CSS and JavaScript frontend.
 - [ ] Set up Node.js backend environment.
 - [ ] Configure Vercel Serverless Functions.
-- [ ] Initialize npm and configure `package.json`.
+- [x] Initialize npm and configure `package.json`.
 - [ ] Install necessary dependencies.
 - [ ] Configure Google Gemini SDK.
 - [ ] Configure environment variables.
 - [ ] Create `.gitignore` and `.env.example`.
 - [ ] Configure local development environment.
-- [ ] Initialize Git repository.
+- [x] Initialize Git repository.
 - [ ] Create GitHub repository.
 - [ ] Verify the application runs locally.
 - [ ] Verify frontend assets load correctly.
@@ -168,7 +168,7 @@ Users answer a series of easy medical questions. Google Gemini processes their r
 
 ---
 
-**Project Status:** Not Started
+**Project Status:** Phase 1 — Setup & Environment remains incomplete under the roadmap's phase gate. Phase 2 questionnaire code is already present, but its flows have not been verified in a browser. Backend, Vercel, environment, and runtime checks remain incomplete; the report-generation API and UI are placeholders.
 
 **Total Development Phases:** 5
 

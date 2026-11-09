@@ -133,27 +133,19 @@ function formatAnswer(id, answers) {
     }
 
     case "medications": {
-      const past = formatOptions(
-        answers.past,
-        answers.past_medications_other
-      );
+      const selected = answers.medications || "";
 
-      const current = formatOptions(
-        answers.current,
-        answers.current_medications_other
-      );
-
-      const parts = [];
-
-      if (past) {
-        parts.push(`Past medications: ${past}`);
+      if (selected === "Other") {
+        return answers.medications_other
+          ? `Other: ${answers.medications_other}`
+          : "Other";
       }
 
-      if (current) {
-        parts.push(`Current medications: ${current}`);
+      if (selected.startsWith("Yes") && answers.medications_details) {
+        return `${selected}: ${answers.medications_details}`;
       }
 
-      return parts.join("\n");
+      return selected;
     }
 
     case "allergies": {

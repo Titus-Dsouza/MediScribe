@@ -7,7 +7,7 @@ import { renderReview } from "./report.js";
 function renderLanding() {
   const app = document.getElementById("app");
   app.innerHTML = `
-    <div class="glass-card">
+    <div class="glass-card landing-card">
       <h1>MediScribe</h1>
       <h2>Simplifying Clinical Documentation</h2>
       <p>Share your symptoms. Create a structured clinical report.</p>

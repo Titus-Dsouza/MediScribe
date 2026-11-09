@@ -1,80 +1,209 @@
 /*
   MediScribe – Global stylesheet
   Implements the glassmorphism design system described in Design.md.
-  Light medical theme – soft blue (#2563EB) accent on a very light background.
+  Light medical theme: soft blue (#2563EB) accent on a very light background.
+
+  Sections:
+    1. CSS variables
+    2. Reset & base
+    3. App layout
+    4. Header & footer
+    5. Glassmorphism card
+    6. Typography
+    7. Buttons
+    8. Inputs & progress
+    9. Questionnaire options
+   10. Conditional fields
+   11. Review page
+   12. Responsive / mobile
 */
 
-/* Basic reset */
-* {
+/* ============================================================
+   1. CSS VARIABLES
+   ============================================================ */
+:root {
+  --blue:        #2563EB;
+  --blue-dark:   #1e40af;
+  --blue-hover:  #1e4bb8;
+  --blue-ring:   rgba(37, 99, 235, 0.2);
+  --blue-soft:   rgba(219, 234, 254, 0.65);
+  --blue-sel:    rgba(219, 234, 254, 0.9);
+  --blue-border: rgba(37, 99, 235, 0.16);
+
+  --text-primary: #172554;
+  --text-muted:   #64748B;
+
+  --bg-page:    #EFF6FF;
+  --bg-glass:   rgba(255, 255, 255, 0.65);
+  --bg-glass-sm: rgba(255, 255, 255, 0.55);
+  --bg-opt:     rgba(255, 255, 255, 0.62);
+  --bg-input:   rgba(255, 255, 255, 0.45);
+  --bg-btn-sec: rgba(255, 255, 255, 0.4);
+
+  --border-glass: rgba(255, 255, 255, 0.7);
+  --border-glass-sm: rgba(255, 255, 255, 0.5);
+  --border-opt:   rgba(37, 99, 235, 0.16);
+
+  --shadow-card: 0 4px 30px rgba(0, 0, 0, 0.1);
+  --shadow-ring: 0 0 0 3px var(--blue-ring);
+
+  --radius-card: 12px;
+  --radius-btn:   8px;
+  --radius-opt:  10px;
+
+  /* fixed chrome heights */
+  --header-h: 54px;
+  --footer-h: 36px;
+}
+
+/* ============================================================
+   2. RESET & BASE
+   ============================================================ */
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
   height: 100%;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background: #EFF6FF;
-  /* light blue‑tinted background */
-  color: #172554;
-  /* primary text */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+               Helvetica, Arial, sans-serif;
+  background: var(--bg-page);
+  color: var(--text-primary);
   line-height: 1.5;
+  /* make room for fixed header and footer */
+  padding-top: var(--header-h);
+  padding-bottom: var(--footer-h);
 }
 
-/* Centered app container */
+/* ============================================================
+   3. APP LAYOUT
+   The #app div fills the remaining viewport and centres its
+   card using flex + auto margins. This keeps the card centred
+   when content is short and scrolls naturally when it is tall.
+   ============================================================ */
 .app-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 1rem;
+  /* flex-start so the flex container does not force a fixed height;
+     vertical centring is achieved via margin:auto on the card child */
+  justify-content: flex-start;
+  min-height: 100%;       /* fill the page, not the viewport */
+  padding: 1.5rem 1rem;
 }
 
-/* Glass card – used for landing, questionnaire, review */
+/* ============================================================
+   4. HEADER & FOOTER
+   ============================================================ */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 1.25rem;
+  z-index: 100;
+  background: var(--bg-glass-sm);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-glass-sm);
+  pointer-events: none;   /* clicks pass through */
+}
+
+.site-header__symbol {
+  font-size: 22px;
+  line-height: 1;
+  color: var(--blue);
+}
+
+.site-header__name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--blue-dark);
+  letter-spacing: 0.01em;
+}
+
+.site-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: var(--footer-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  background: var(--bg-glass-sm);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid var(--border-glass-sm);
+  pointer-events: none;
+}
+
+/* ============================================================
+   5. GLASSMORPHISM CARD
+   Single definition. The card centres itself vertically via
+   auto top/bottom margins inside the flex column.
+   ============================================================ */
 .glass-card {
-  background: rgba(255, 255, 255, 0.65);
-  border-radius: 12px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  background: var(--bg-glass);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--border-glass);
   padding: 2rem;
   max-width: 600px;
   width: 100%;
-  margin: 1rem;
+  /* vertical centring trick: auto top+bottom margins push card to middle */
+  margin-top: auto;
+  margin-bottom: auto;
+  overflow: visible;
 }
 
-h1,
-h2,
-h3 {
+/* Questionnaire cards with MCQ grids may need extra width */
+.glass-card:has(.option-group) {
+  max-width: 760px;
+}
+
+/* Landing page – centre the text content inside the card */
+.glass-card.landing-card {
+  text-align: center;
+}
+
+.glass-card.landing-card .btn-primary {
+  display: inline-block;
+  margin: 0.75rem auto 0;
+}
+
+/* ============================================================
+   6. TYPOGRAPHY
+   ============================================================ */
+h1, h2, h3 {
   font-weight: 600;
   margin-bottom: 0.75rem;
 }
 
-h1 {
-  font-size: 36px;
-}
+h1 { font-size: 36px; }
+h2 { font-size: 28px; }
+h3 { font-size: 22px; }
 
-h2 {
-  font-size: 28px;
-}
+p { margin-bottom: 1rem; }
 
-h3 {
-  font-size: 22px;
-}
-
-p {
-  margin-bottom: 1rem;
-}
-
-/* Primary button – blue background */
+/* ============================================================
+   7. BUTTONS
+   ============================================================ */
 .btn-primary {
-  background: #2563EB;
+  background: var(--blue);
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-btn);
   padding: 0.75rem 1.5rem;
   font-size: 17px;
   cursor: pointer;
@@ -83,204 +212,75 @@ p {
   text-align: center;
 }
 
-.btn-primary:hover {
-  background: #1e4bb8;
-}
+.btn-primary:hover  { background: var(--blue-hover); }
+.btn-primary:active { transform: scale(0.98); }
 
-.btn-primary:active {
-  transform: scale(0.98);
-}
-
-/* Secondary button – glass background */
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.4);
-  color: #2563EB;
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  border-radius: 8px;
+  background: var(--bg-btn-sec);
+  color: var(--blue);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-btn);
   padding: 0.75rem 1.5rem;
   font-size: 17px;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.1s ease;
 }
 
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.6);
-}
+.btn-secondary:hover  { background: rgba(255, 255, 255, 0.6); }
+.btn-secondary:active { transform: scale(0.98); }
 
-.btn-secondary:active {
-  transform: scale(0.98);
-}
-
-/* Input fields – large, readable, glass style */
+/* ============================================================
+   8. INPUTS & PROGRESS BAR
+   ============================================================ */
 .input-field {
   width: 100%;
   padding: 0.75rem;
   font-size: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-btn);
+  background: var(--bg-input);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   margin-bottom: 1rem;
+  color: inherit;
+  font-family: inherit;
 }
 
 .input-field:focus {
   outline: none;
-  border-color: #2563EB;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  border-color: var(--blue);
+  box-shadow: var(--shadow-ring);
 }
 
-/* Progress bar */
 .progress-container {
   width: 100%;
   background: rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
+  border-radius: var(--radius-btn);
   overflow: hidden;
   margin-bottom: 1.5rem;
 }
 
 .progress-bar {
   height: 8px;
-  background: #2563EB;
+  background: var(--blue);
   width: 0%;
   transition: width 0.3s ease;
 }
 
-/* Error text */
 .error-msg {
   color: #DC2626;
   font-size: 15px;
   margin-top: -0.5rem;
   margin-bottom: 1rem;
+  min-height: 1.2em;  /* prevent layout jump when empty */
 }
 
-/* Responsive tweaks */
-@media (max-width: 480px) {
-  .glass-card {
-    padding: 1.5rem;
-  }
-
-  h1 {
-    font-size: 32px;
-  }
-
-  .btn-primary,
-  .btn-secondary {
-    font-size: 16px;
-    padding: 0.6rem 1.2rem;
-  }
-}
-
-/* ==============================
-   MEDISCRIBE REVIEW PAGE
-============================== */
-
-.review-card {
-  width: 100%;
-  min-width: 0;
-}
-
-.review-section-heading {
-  margin-top: 1.8rem;
-  margin-bottom: 0.9rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(37, 99, 235, 0.15);
-}
-
-.review-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.review-item {
-  display: grid;
-  grid-template-columns: minmax(130px, 0.35fr) minmax(0, 1fr) auto;
-  align-items: start;
-  gap: 12px;
-  padding: 12px 0;
-  margin-bottom: 6px;
-  border-bottom: 1px solid rgba(100, 116, 139, 0.12);
-}
-
-.review-label {
-  min-width: 0;
-}
-
-.review-value {
-  min-width: 0;
-  white-space: pre-line;
-  overflow-wrap: anywhere;
-  line-height: 1.6;
-}
-
-.review-empty {
-  color: #64748B;
-  font-style: italic;
-}
-
-.review-edit {
-  margin-left: 4px;
-  white-space: nowrap;
-  align-self: start;
-}
-
-.review-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 1.8rem;
-}
-
-/* Mobile layout */
-@media (max-width: 600px) {
-  .review-item {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 8px;
-  }
-
-  .review-label {
-    grid-column: 1 / -1;
-  }
-
-  .review-value {
-    grid-column: 1;
-  }
-
-  .review-edit {
-    grid-column: 2;
-    grid-row: 2;
-  }
-
-  .review-actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .review-actions button {
-    width: 100%;
-  }
-}/* MEDISCRIBE QUESTIONNAIRE LAYOUT */
-
-.glass-card:has(.option-group) {
-  width: min(100%, 760px);
-  max-width: 760px;
-  height: auto;
-  min-height: 0;
-  overflow: visible;
-}
-
-.app-container:has(.option-group) {
-  justify-content: flex-start;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-
+/* ============================================================
+   9. QUESTIONNAIRE OPTIONS
+   ============================================================ */
 .option-group {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
   gap: 12px;
   width: 100%;
   margin: 1rem 0 1.25rem;
@@ -292,32 +292,36 @@ p {
   gap: 12px;
   width: 100%;
   min-width: 0;
-  min-height: 54px;
-  padding: 13px 15px;
-  border: 1px solid rgba(37, 99, 235, 0.16);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.62);
+  min-height: 52px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-opt);
+  border-radius: var(--radius-opt);
+  background: var(--bg-opt);
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease,
+              box-shadow 0.2s ease;
+  user-select: none;
 }
 
 .option-card:hover {
-  background: rgba(219, 234, 254, 0.65);
-  border-color: #2563EB;
+  background: var(--blue-soft);
+  border-color: var(--blue);
 }
 
+/* CSS :has() selects the card when its inner checkbox/radio is checked */
 .option-card:has(input:checked) {
-  background: rgba(219, 234, 254, 0.9);
-  border-color: #2563EB;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  background: var(--blue-sel);
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px var(--blue-ring);
 }
 
-.option-card input {
+.option-card input[type="radio"],
+.option-card input[type="checkbox"] {
   flex: 0 0 auto;
   width: 18px;
   height: 18px;
   margin: 0;
-  accent-color: #2563EB;
+  accent-color: var(--blue);
   cursor: pointer;
 }
 
@@ -327,40 +331,143 @@ p {
   line-height: 1.4;
 }
 
-.conditional-field {
-  width: 100%;
-  margin: 0.75rem 0 1rem;
+/* Severity / range slider */
+#slider-onset_severity {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--blue);
 }
 
+/* ============================================================
+   10. CONDITIONAL FIELDS
+   ============================================================ */
+.conditional-field {
+  width: 100%;
+  margin: 0.5rem 0 0.75rem;
+}
+
+/* Remove the bottom margin that the generic .input-field adds
+   when it sits inside a conditional-field container */
 .conditional-field .input-field {
   margin-bottom: 0;
 }
 
-#slider-onset_severity {
-  flex: 1;
-  min-width: 0;
-  accent-color: #2563EB;
+/* ============================================================
+   11. REVIEW PAGE
+   ============================================================ */
+.review-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.5rem;
 }
 
+.review-item {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.35fr) minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(100, 116, 139, 0.12);
+}
+
+.review-label {
+  font-weight: 600;
+  min-width: 0;
+}
+
+.review-value {
+  min-width: 0;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+
+.review-empty {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.review-edit {
+  white-space: nowrap;
+  align-self: start;
+}
+
+/* Section headings inside the review card */
+.glass-card h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--blue-border);
+}
+
+/* Row of bottom action buttons on the review page */
+.review-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 1.8rem;
+}
+
+/* ============================================================
+   12. RESPONSIVE / MOBILE
+   ============================================================ */
 @media (max-width: 600px) {
-  .glass-card:has(.option-group) {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
+  /* Tighten card padding on small screens */
+  .glass-card {
     padding: 1.25rem;
+    margin-left: 0;
+    margin-right: 0;
+    border-radius: 10px;
   }
 
-  .app-container:has(.option-group) {
-    padding: 1rem;
+  /* Full-width for MCQ cards */
+  .glass-card:has(.option-group) {
+    max-width: 100%;
   }
 
+  /* Stack options into a single column */
   .option-group {
     grid-template-columns: 1fr;
     gap: 9px;
   }
 
   .option-card {
-    min-height: 50px;
-    padding: 12px;
+    min-height: 48px;
+    padding: 11px 12px;
   }
-}EOF
+
+  /* Review grid: label spans full width, value and edit button share next row */
+  .review-item {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .review-label { grid-column: 1 / -1; }
+  .review-value { grid-column: 1; }
+  .review-edit  { grid-column: 2; grid-row: 2; }
+
+  .review-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .review-actions button { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 30px; }
+  h2 { font-size: 24px; }
+  h3 { font-size: 19px; }
+
+  .btn-primary,
+  .btn-secondary {
+    font-size: 16px;
+    padding: 0.6rem 1.2rem;
+  }
+
+  .site-header__symbol { font-size: 20px; }
+  .site-header__name   { font-size: 15px; }
+  .site-footer         { font-size: 12px; }
+}

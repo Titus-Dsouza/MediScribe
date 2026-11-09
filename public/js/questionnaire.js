@@ -134,30 +134,35 @@ export const QUESTIONS = [
     section: "Symptoms"
   },
 
-  // 8. Medications – past and current (two sub‑questions)
+  // 8. Past and current medications – single-choice radio
   {
     id: "medications",
     label: "Past and current medications",
     required: false,
-    type: "dual",
-    past: {
-      label: "Past medications",
-      options: [
-        { value: "No previous medications", label: "No previous medications" },
-        { value: "Yes, I have taken medications before", label: "Yes, I have taken medications before" },
-        { value: "Not sure", label: "Not sure" }
-      ],
-      otherField: { id: "past_medications_other", placeholder: "List past medications" }
-    },
-    current: {
-      label: "Current medications",
-      options: [
-        { value: "Not taking any medication", label: "Not taking any medication" },
-        { value: "Yes, currently taking medication", label: "Yes, currently taking medication" },
-        { value: "Not sure", label: "Not sure" }
-      ],
-      otherField: { id: "current_medications_other", placeholder: "List current medications" }
-    },
+    type: "radio",
+    options: [
+      { value: "No previous medications", label: "No previous medications" },
+      { value: "Yes, I have taken medications before", label: "Yes, I have taken medications before" },
+      { value: "Not taking any medication", label: "Not taking any medication" },
+      { value: "Yes, currently taking medication", label: "Yes, currently taking medication" },
+      { value: "Not sure", label: "Not sure" },
+      { value: "Other", label: "Other" }
+    ],
+    conditionalFields: [
+      {
+        id: "medications_details",
+        placeholder: "Please specify the medications",
+        triggerValues: [
+          "Yes, I have taken medications before",
+          "Yes, currently taking medication"
+        ]
+      },
+      {
+        id: "medications_other",
+        placeholder: "Please describe your answer",
+        triggerValues: ["Other"]
+      }
+    ],
     section: "Medical Background"
   },
 
@@ -299,13 +304,46 @@ function renderQuestion(idx) {
     content.appendChild(group);
     content.appendChild(err);
     getValue = () => {
-      const checked = card.querySelector(`input[name='${name}']:checked`);
+      const checked = group.querySelector(`input[name='${name}']:checked`);
       return checked ? checked.value : "";
     };
     focusEl = group;
 
-    // Conditional "Other" field
-    if (q.otherField) {
+    // Conditional fields for the selected radio option.
+    if (q.conditionalFields) {
+      const fields = q.conditionalFields.map((field) => {
+        const fieldDiv = document.createElement("div");
+        fieldDiv.className = "conditional-field";
+        fieldDiv.style.marginTop = "0.75rem";
+        fieldDiv.style.display = "none";
+
+        const fieldInput = document.createElement("input");
+        fieldInput.type = "text";
+        fieldInput.className = "input-field";
+        fieldInput.placeholder = field.placeholder;
+        fieldInput.id = field.id;
+        fieldInput.value = answers[field.id] ?? "";
+        fieldDiv.appendChild(fieldInput);
+        content.appendChild(fieldDiv);
+
+        return { ...field, input: fieldInput, container: fieldDiv };
+      });
+
+      const updateConditionalFields = () => {
+        const selected = getValue();
+        fields.forEach((field) => {
+          const visible = field.triggerValues.includes(selected);
+          field.container.style.display = visible ? "block" : "none";
+          if (!visible) field.input.value = "";
+        });
+      };
+
+      group.addEventListener("change", () => {
+        updateConditionalFields();
+        updateOptionCardSelection();
+      });
+      updateConditionalFields();
+    } else if (q.otherField) {
       const otherDiv = document.createElement("div");
       otherDiv.className = "conditional-field";
       otherDiv.style.marginTop = "0.75rem";
@@ -381,7 +419,7 @@ function renderQuestion(idx) {
       otherDiv.appendChild(otherInput);
       content.appendChild(otherDiv);
 
-      const otherCheckbox = card.querySelector(`input[id='opt-${q.id}-Other']`);
+      const otherCheckbox = group.querySelector(`input[id='opt-${q.id}-Other']`);
       if (otherCheckbox) {
         otherCheckbox.addEventListener("change", () => {
           otherDiv.style.display = otherCheckbox.checked ? "block" : "none";
@@ -554,6 +592,15 @@ function renderQuestion(idx) {
   card.appendChild(nav);
   app.appendChild(card);
 
+  // Enter/Return key → same as clicking Continue (skip inside textareas)
+  function handleEnterKey(e) {
+    if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+      e.preventDefault();
+      btnNext.click();
+    }
+  }
+  card.addEventListener("keydown", handleEnterKey);
+
   // Focus first interactive element for accessibility
   focusEl && focusEl.focus && focusEl.focus();
 
@@ -618,6 +665,20 @@ function renderQuestion(idx) {
     if (q.otherField) {
       const otherVal = document.getElementById(q.otherField.id)?.value.trim();
       if (otherVal) answers[q.otherField.id] = otherVal;
+    }
+    if (q.conditionalFields) {
+      q.conditionalFields.forEach((field) => {
+        const fieldValue = document.getElementById(field.id)?.value.trim();
+        if (field.triggerValues.includes(val)) {
+          if (fieldValue) {
+            answers[field.id] = fieldValue;
+          } else {
+            delete answers[field.id];
+          }
+        } else {
+          delete answers[field.id];
+        }
+      });
     }
     if (q.type === "checkbox" && q.otherField) {
       const otherVal = document.getElementById(q.otherField.id)?.value.trim();
