@@ -20,9 +20,9 @@ export const QUESTIONS = [
     type: "radio",
     options: [
       { value: "Male", label: "Male" },
-      { value: "Female", label: "Female" },
+      { value: "Female", label: "Female" }
     ],
-    section: "Patient Information",
+    section: "Patient Information"
   },
 
   // 4. Chief complaint – radio with "Other" => extra text
@@ -41,10 +41,10 @@ export const QUESTIONS = [
       { value: "Body pain", label: "Body pain" },
       { value: "Fatigue or weakness", label: "Fatigue or weakness" },
       { value: "Skin problems", label: "Skin problems" },
-      { value: "Other", label: "Other" },
+      { value: "Other", label: "Other" }
     ],
     otherField: { id: "chief_other", placeholder: "Please describe" },
-    section: "Chief Complaint",
+    section: "Chief Complaint"
   },
 
   // 5. Symptoms – multiple checkboxes, last option "Other"
@@ -71,10 +71,10 @@ export const QUESTIONS = [
       { value: "Fatigue", label: "Fatigue" },
       { value: "Skin rash", label: "Skin rash" },
       { value: "Loss of appetite", label: "Loss of appetite" },
-      { value: "Other", label: "Other" },
+      { value: "Other", label: "Other" }
     ],
     otherField: { id: "symptoms_other", placeholder: "Please describe" },
-    section: "Symptoms",
+    section: "Symptoms"
   },
 
   // 6. Onset + Severity (combined)
@@ -90,10 +90,10 @@ export const QUESTIONS = [
       { value: "4–7 days ago", label: "4–7 days ago" },
       { value: "1–2 weeks ago", label: "1–2 weeks ago" },
       { value: "More than 2 weeks ago", label: "More than 2 weeks ago" },
-      { value: "Not sure", label: "Not sure" },
+      { value: "Not sure", label: "Not sure" }
     ],
     severity: { min: 1, max: 10, step: 1 },
-    section: "Symptoms",
+    section: "Symptoms"
   },
 
   // 7. What makes it better / worse? (dual checkbox groups)
@@ -112,9 +112,9 @@ export const QUESTIONS = [
         { value: "Changing position", label: "Changing position" },
         { value: "Nothing helps", label: "Nothing helps" },
         { value: "Not sure", label: "Not sure" },
-        { value: "Other", label: "Other" },
+        { value: "Other", label: "Other" }
       ],
-      otherField: { id: "better_other", placeholder: "Please specify" },
+      otherField: { id: "better_other", placeholder: "Please specify" }
     },
     worse: {
       label: "What makes it worse?",
@@ -127,11 +127,11 @@ export const QUESTIONS = [
         { value: "Certain times of the day", label: "Certain times of the day" },
         { value: "Nothing makes it worse", label: "Nothing makes it worse" },
         { value: "Not sure", label: "Not sure" },
-        { value: "Other", label: "Other" },
+        { value: "Other", label: "Other" }
       ],
-      otherField: { id: "worse_other", placeholder: "Please specify" },
+      otherField: { id: "worse_other", placeholder: "Please specify" }
     },
-    section: "Symptoms",
+    section: "Symptoms"
   },
 
   // 8. Medications – past and current (two sub‑questions)
@@ -145,20 +145,20 @@ export const QUESTIONS = [
       options: [
         { value: "No previous medications", label: "No previous medications" },
         { value: "Yes, I have taken medications before", label: "Yes, I have taken medications before" },
-        { value: "Not sure", label: "Not sure" },
+        { value: "Not sure", label: "Not sure" }
       ],
-      otherField: { id: "past_medications_other", placeholder: "List past medications" },
+      otherField: { id: "past_medications_other", placeholder: "List past medications" }
     },
     current: {
       label: "Current medications",
       options: [
         { value: "Not taking any medication", label: "Not taking any medication" },
         { value: "Yes, currently taking medication", label: "Yes, currently taking medication" },
-        { value: "Not sure", label: "Not sure" },
+        { value: "Not sure", label: "Not sure" }
       ],
-      otherField: { id: "current_medications_other", placeholder: "List current medications" },
+      otherField: { id: "current_medications_other", placeholder: "List current medications" }
     },
-    section: "Medical Background",
+    section: "Medical Background"
   },
 
   // 9. Allergies
@@ -170,10 +170,10 @@ export const QUESTIONS = [
     options: [
       { value: "No known allergies", label: "No known allergies" },
       { value: "Yes, I have allergies", label: "Yes, I have allergies" },
-      { value: "Not sure", label: "Not sure" },
+      { value: "Not sure", label: "Not sure" }
     ],
     otherField: { id: "allergies_other", placeholder: "Specify allergies" },
-    section: "Medical Background",
+    section: "Medical Background"
   },
 
   // 10. Additional notes (optional textarea)
@@ -183,17 +183,17 @@ export const QUESTIONS = [
     required: false,
     type: "textarea",
     placeholder: "Anything else you would like the healthcare professional to know?",
-    section: "Additional",
-  },
+    section: "Additional"
+  }
 ];
 
 /* --------------------------------------------------------------------------
    INTERNAL STATE – a single object for the whole session
    -------------------------------------------------------------------------- */
-let answers = {};                 // patient answers
-let currentIndex = 0;            // which question is displayed
-let editMode = false;            // true when we are editing from review
-let onFinishedCallback = null;   // set by startQuestionnaire / editAnswer
+let answers = {};
+let currentIndex = 0;
+let editMode = false; // true when we are editing from review
+let onFinishedCallback = null; // set by startQuestionnaire / editAnswer
 
 /** Helper: safe number conversion */
 function toNumber(value) {
@@ -211,30 +211,32 @@ function renderQuestion(idx) {
   const card = document.createElement("div");
   card.className = "glass-card";
 
-  // Progress bar
+  // Progress bar – show "Question X of Y"
   const progContainer = document.createElement("div");
   progContainer.className = "progress-container";
   const progBar = document.createElement("div");
   progBar.className = "progress-bar";
-  progBar.style.width = `${Math.round((idx / total) * 100)}%`;
+  progBar.style.width = `${Math.round(((idx + 1) / total) * 100)}%`;
   progContainer.appendChild(progBar);
   card.appendChild(progContainer);
 
-  // Heading (question label)
+  // Heading
   const heading = document.createElement("h2");
   heading.textContent = `${idx + 1}. ${q.label}`;
   card.appendChild(heading);
 
-  // Container for the interactive part
   const content = document.createElement("div");
 
-  // Utility to create an error message area (ARIA live)
+  // Error message area (ARIA live)
   const err = document.createElement("div");
   err.id = "err";
   err.className = "error-msg";
   err.setAttribute("role", "alert");
 
-  // ------- Rendering per type -------------------------------------------
+  let getValue;
+  let focusEl;
+
+  // ---------- Rendering per type ----------
   if (q.type === "text" || q.type === "number") {
     const label = document.createElement("label");
     label.htmlFor = `inp-${q.id}`;
@@ -251,9 +253,8 @@ function renderQuestion(idx) {
     if (q.required) input.required = true;
     content.appendChild(input);
     content.appendChild(err);
-    // Continue handler will read `input.value`
-    const getValue = () => input.value.trim();
-    var focusEl = input;
+    getValue = () => input.value.trim();
+    focusEl = input;
   } else if (q.type === "textarea") {
     const label = document.createElement("label");
     label.htmlFor = `inp-${q.id}`;
@@ -269,10 +270,9 @@ function renderQuestion(idx) {
     textarea.value = answers[q.id] ?? "";
     content.appendChild(textarea);
     content.appendChild(err);
-    var getValue = () => textarea.value.trim();
-    var focusEl = textarea;
+    getValue = () => textarea.value.trim();
+    focusEl = textarea;
   } else if (q.type === "radio") {
-    // Render each option as a selectable card (radio hidden)
     const group = document.createElement("div");
     group.className = "option-group";
     const name = `radio-${q.id}`;
@@ -298,15 +298,16 @@ function renderQuestion(idx) {
     });
     content.appendChild(group);
     content.appendChild(err);
-    // Helper to retrieve selected value
-    var getValue = () => {
+    getValue = () => {
       const checked = card.querySelector(`input[name='${name}']:checked`);
       return checked ? checked.value : "";
     };
-    var focusEl = group;
+    focusEl = group;
+
     // Conditional "Other" field
     if (q.otherField) {
       const otherDiv = document.createElement("div");
+      otherDiv.className = "conditional-field";
       otherDiv.style.marginTop = "0.75rem";
       otherDiv.style.display = "none";
       const otherInput = document.createElement("input");
@@ -316,6 +317,7 @@ function renderQuestion(idx) {
       otherInput.id = q.otherField.id;
       otherDiv.appendChild(otherInput);
       content.appendChild(otherDiv);
+
       // Show/hide based on selection
       group.addEventListener("change", () => {
         if (getValue() === "Other") {
@@ -323,9 +325,17 @@ function renderQuestion(idx) {
         } else {
           otherDiv.style.display = "none";
         }
+        updateOptionCardSelection();
       });
-      // Pre‑fill if answer already stored
-      if (answers[q.otherField.id]) otherInput.value = answers[q.otherField.id];
+
+      // Pre‑fill and ensure visibility if previously saved as "Other"
+      if (answers[q.id] === "Other") {
+        otherDiv.style.display = "block";
+        const stored = answers[q.otherField.id] ?? "";
+        otherInput.value = stored;
+      } else if (answers[q.otherField.id]) {
+        otherInput.value = answers[q.otherField.id];
+      }
     }
   } else if (q.type === "checkbox") {
     const group = document.createElement("div");
@@ -335,27 +345,32 @@ function renderQuestion(idx) {
       const wrapper = document.createElement("label");
       wrapper.className = "option-card";
       wrapper.htmlFor = optId;
+
       const chk = document.createElement("input");
       chk.type = "checkbox";
       chk.id = optId;
       chk.value = opt.value;
       if (answers[q.id] && answers[q.id].includes(opt.value)) chk.checked = true;
       wrapper.appendChild(chk);
+
       const span = document.createElement("span");
       span.textContent = opt.label;
       wrapper.appendChild(span);
+
       group.appendChild(wrapper);
     });
     content.appendChild(group);
     content.appendChild(err);
-    var getValue = () => {
+    getValue = () => {
       const checked = [...card.querySelectorAll(`input[id^='opt-${q.id}']:checked`)].map((c) => c.value);
       return checked;
     };
-    var focusEl = group;
-    // Conditional Other field
+    focusEl = group;
+
+    // Conditional "Other" field
     if (q.otherField) {
       const otherDiv = document.createElement("div");
+      otherDiv.className = "conditional-field";
       otherDiv.style.marginTop = "0.75rem";
       otherDiv.style.display = "none";
       const otherInput = document.createElement("input");
@@ -365,15 +380,15 @@ function renderQuestion(idx) {
       otherInput.id = q.otherField.id;
       otherDiv.appendChild(otherInput);
       content.appendChild(otherDiv);
-      // Show/hide when "Other" is (un)checked
+
       const otherCheckbox = card.querySelector(`input[id='opt-${q.id}-Other']`);
       if (otherCheckbox) {
         otherCheckbox.addEventListener("change", () => {
           otherDiv.style.display = otherCheckbox.checked ? "block" : "none";
+          updateOptionCardSelection();
         });
-        // Pre‑fill if stored
+        // Pre‑fill and adjust visibility based on stored data
         if (answers[q.otherField.id]) otherInput.value = answers[q.otherField.id];
-        // Ensure visibility matches stored answer
         if (otherCheckbox.checked) otherDiv.style.display = "block";
       }
     }
@@ -395,7 +410,7 @@ function renderQuestion(idx) {
       radio.name = name;
       radio.id = optId;
       radio.value = opt.value;
-      if (answers["onset"] === opt.value) radio.checked = true;
+      if (answers[q.id] && answers[q.id].onset === opt.value) radio.checked = true;
       wrapper.appendChild(radio);
       const span = document.createElement("span");
       span.textContent = opt.label;
@@ -404,6 +419,7 @@ function renderQuestion(idx) {
     });
     content.appendChild(onsetGroup);
     content.appendChild(err);
+
     // Severity slider
     const sevLabel = document.createElement("p");
     sevLabel.textContent = "How severe is it? (1 = Very mild, 10 = Extremely severe)";
@@ -416,7 +432,7 @@ function renderQuestion(idx) {
     slider.min = q.severity.min;
     slider.max = q.severity.max;
     slider.step = q.severity.step;
-    slider.value = answers["severity"] ?? 5;
+    slider.value = answers[q.id] ? answers[q.id].severity : 5;
     slider.id = `slider-${q.id}`;
     const sevValue = document.createElement("span");
     sevValue.style.marginLeft = "0.5rem";
@@ -427,19 +443,18 @@ function renderQuestion(idx) {
     sliderContainer.appendChild(slider);
     sliderContainer.appendChild(sevValue);
     content.appendChild(sliderContainer);
-    var getValue = () => ({ onset: getOnset(), severity: Number(slider.value) });
-    function getOnset() {
+
+    const getOnset = () => {
       const checked = card.querySelector(`input[name='${name}']:checked`);
       return checked ? checked.value : "";
-    }
-    var focusEl = slider;
+    };
+    getValue = () => ({ onset: getOnset(), severity: Number(slider.value) });
+    focusEl = slider;
   } else if (q.type === "dual") {
     // Two sub‑sections, each with its own options (checkboxes)
     const subIds = [];
-    const subValues = {};
     Object.entries(q).forEach(([key, sub]) => {
-      if (key === "id" || key === "label" || key === "type" || key === "required" || key === "section") return;
-      // sub is an object with label, options, otherField
+      if (["id", "label", "type", "required", "section"].includes(key)) return;
       const subDiv = document.createElement("div");
       const subHeader = document.createElement("h3");
       subHeader.textContent = sub.label;
@@ -465,9 +480,11 @@ function renderQuestion(idx) {
         group.appendChild(wrapper);
       });
       subDiv.appendChild(group);
+
       // Conditional Other field
       if (sub.otherField) {
         const otherDiv = document.createElement("div");
+        otherDiv.className = "conditional-field";
         otherDiv.style.marginTop = "0.75rem";
         otherDiv.style.display = "none";
         const otherInput = document.createElement("input");
@@ -477,25 +494,27 @@ function renderQuestion(idx) {
         otherInput.id = sub.otherField.id;
         otherDiv.appendChild(otherInput);
         subDiv.appendChild(otherDiv);
+
         const otherChk = subDiv.querySelector(`input[id='opt-${q.id}-${key}-Other']`);
         if (otherChk) {
           otherChk.addEventListener("change", () => {
             otherDiv.style.display = otherChk.checked ? "block" : "none";
+            updateOptionCardSelection();
           });
           if (answers[sub.otherField.id]) otherInput.value = answers[sub.otherField.id];
           if (otherChk.checked) otherDiv.style.display = "block";
         }
       }
+
       content.appendChild(subDiv);
       subIds.push(key);
     });
-    // Helper to collect values for each sub‑section
-    var getValue = () => {
+    content.appendChild(err);
+    getValue = () => {
       const result = {};
       subIds.forEach((subKey) => {
         const checked = [...card.querySelectorAll(`input[name='checkbox-${q.id}-${subKey}']:checked`)].map((c) => c.value);
         result[subKey] = checked;
-        // capture possible other text
         const otherId = q[subKey].otherField?.id;
         if (otherId) {
           const otherInput = document.getElementById(otherId);
@@ -504,7 +523,7 @@ function renderQuestion(idx) {
       });
       return result;
     };
-    var focusEl = content;
+    focusEl = content;
   } else {
     console.error("Unsupported question type", q.type);
     return;
@@ -538,6 +557,21 @@ function renderQuestion(idx) {
   // Focus first interactive element for accessibility
   focusEl && focusEl.focus && focusEl.focus();
 
+  // Helper to keep option‑card visual selection in sync
+  function updateOptionCardSelection() {
+    const inputs = card.querySelectorAll("input");
+    inputs.forEach((inp) => {
+      if (inp.type === "radio" || inp.type === "checkbox") {
+        if (inp.checked) {
+          inp.parentElement.classList.add("selected");
+        } else {
+          inp.parentElement.classList.remove("selected");
+        }
+      }
+    });
+  }
+  updateOptionCardSelection();
+
   // ----- Event handlers -----
   btnPrev.addEventListener("click", () => {
     if (currentIndex > 0) {
@@ -555,13 +589,9 @@ function renderQuestion(idx) {
         if (!val) { err.textContent = "This field is required."; return; }
       } else if (q.type === "radio") {
         if (!val) { err.textContent = "Please select an option."; return; }
-      } else if (q.type === "checkbox") {
-        // optional, no validation needed
       } else if (q.type === "mixed") {
         if (!val.onset) { err.textContent = "Please select when it started."; return; }
         if (val.severity < q.severity.min || val.severity > q.severity.max) { err.textContent = "Severity out of range."; return; }
-      } else if (q.type === "dual") {
-        // No required validation for dual sections (all optional)
       }
     }
 
@@ -569,24 +599,21 @@ function renderQuestion(idx) {
     if (q.id === "age") {
       const n = toNumber(val);
       if (n === null || n <= 0) { err.textContent = "Please enter a valid positive age."; return; }
-      val = n; // store as number
-    }
-    if (q.id === "onset_severity") {
-      // val already an object {onset, severity}
+      val = n;
     }
 
     // ----- Store answer -----
     if (q.type === "mixed") {
-      answers["onset"] = val.onset;
-      answers["severity"] = val.severity;
+      answers[q.id] = val; // {onset, severity}
     } else if (q.type === "dual") {
-      // Store each sub‑section array and possible other texts
-      Object.entries(val).forEach(([k, v]) => {
-        answers[k] = v; // k may be "better", "worse", etc.
+      const subVals = val;
+      Object.entries(subVals).forEach(([k, v]) => {
+        answers[k] = v;
       });
     } else {
       answers[q.id] = val;
     }
+
     // Store "Other" text fields if present
     if (q.otherField) {
       const otherVal = document.getElementById(q.otherField.id)?.value.trim();
@@ -599,11 +626,15 @@ function renderQuestion(idx) {
 
     err.textContent = ""; // clear any previous error
 
-    if (currentIndex < QUESTIONS.length - 1) {
+    if (editMode) {
+      // Editing from review – finish and go back to review
+      editMode = false;
+      onFinishedCallback && onFinishedCallback();
+    } else if (currentIndex < QUESTIONS.length - 1) {
       currentIndex++;
       renderQuestion(currentIndex);
     } else {
-      // Finished – call the supplied callback (review screen)
+      // Finished questionnaire – call the supplied callback (review screen)
       onFinishedCallback && onFinishedCallback({ ...answers });
     }
   });
@@ -613,6 +644,7 @@ function renderQuestion(idx) {
    PUBLIC API
    -------------------------------------------------------------------------- */
 export function startQuestionnaire(onFinished) {
+  // Reset state for a fresh run (unless we are returning from edit mode)
   if (!editMode) {
     answers = {};
     currentIndex = 0;
@@ -640,6 +672,7 @@ export function editAnswer(questionId, returnToReview) {
   if (idx < 0) return;
   currentIndex = idx;
   editMode = true;
+  // When the edited question is saved, we want to go straight back to review
   onFinishedCallback = () => {
     editMode = false;
     returnToReview && returnToReview();
