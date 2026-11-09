@@ -1,0 +1,149 @@
+/*
+  MediScribe – Global stylesheet
+  Implements the glassmorphism design system described in Design.md.
+  Light medical theme – soft blue (#2563EB) accent on a very light background.
+*/
+
+/* Basic reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: #EFF6FF; /* light blue‑tinted background */
+  color: #172554; /* primary text */
+  line-height: 1.5;
+}
+
+/* Centered app container */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+/* Glass card – used for landing, questionnaire, review */
+.glass-card {
+  background: rgba(255, 255, 255, 0.65);
+  border-radius: 12px;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.7);
+  padding: 2rem;
+  max-width: 600px;
+  width: 100%;
+  margin: 1rem;
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+h1 { font-size: 36px; }
+h2 { font-size: 28px; }
+h3 { font-size: 22px; }
+
+p { margin-bottom: 1rem; }
+
+/* Primary button – blue background */
+.btn-primary {
+  background: #2563EB;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 17px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn-primary:hover {
+  background: #1e4bb8;
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* Secondary button – glass background */
+.btn-secondary {
+  background: rgba(255,255,255,0.4);
+  color: #2563EB;
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 17px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.6);
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
+}
+
+/* Input fields – large, readable, glass style */
+.input-field {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 18px;
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  margin-bottom: 1rem;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+}
+
+/* Progress bar */
+.progress-container {
+  width: 100%;
+  background: rgba(255,255,255,0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.progress-bar {
+  height: 8px;
+  background: #2563EB;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+/* Error text */
+.error-msg {
+  color: #DC2626;
+  font-size: 15px;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 480px) {
+  .glass-card {
+    padding: 1.5rem;
+  }
+  h1 { font-size: 32px; }
+  .btn-primary, .btn-secondary { font-size: 16px; padding: 0.6rem 1.2rem; }
+}
+

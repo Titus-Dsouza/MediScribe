@@ -1,0 +1,15 @@
+{
+  "name": "mediscribe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",,
+  "scripts": {
+    "dev": "echo \"Run local dev server (e.g., vercel dev)\"",
+    "start": "node api/generate-report.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

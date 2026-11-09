@@ -1,0 +1,14 @@
+# Node modules
+node_modules/
+# Environment files
+.env
+.env.local
+# Vercel build artefacts
+.vercel
+# OS files
+.DS_Store
+# Logs
+npm-debug.log*
+# IDE files
+.vscode/
+
