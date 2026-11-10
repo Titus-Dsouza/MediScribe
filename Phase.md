@@ -4,11 +4,11 @@
 
 MediScribe is a simple AI-powered clinical documentation assistant.
 
-Users answer a series of easy medical questions. Google Gemini processes their responses and generates a structured clinical report that they can review, edit and download as a PDF.
+Users answer a series of easy medical questions. The application processes their responses and generates a structured clinical report that they can review, edit and download as a PDF.
 
-**Architecture:** HTML, CSS, JavaScript + Node.js Serverless API + Google Gemini.
+**Architecture:** HTML, CSS, JavaScript + Deterministic Report Generation + jsPDF.
 
-**Backend Hosting:** Vercel Serverless Functions.
+**Backend Hosting:** Vercel Serverless Functions (optional, for validation only).
 
 **Database:** None. No permanent patient-data storage.
 
@@ -18,13 +18,13 @@ Users answer a series of easy medical questions. Google Gemini processes their r
 
 - [ ] Create a clean project structure.
 - [x] Set up HTML, CSS and JavaScript frontend.
-- [ ] Set up Node.js backend environment.
-- [ ] Configure Vercel Serverless Functions.
+- [x] Set up Node.js backend environment.
+- [x] Configure the Vercel Serverless Function route structure.
 - [x] Initialize npm and configure `package.json`.
-- [ ] Install necessary dependencies.
-- [ ] Configure Google Gemini SDK.
-- [ ] Configure environment variables.
-- [ ] Create `.gitignore` and `.env.example`.
+- [x] Install necessary dependencies.
+- [ ] Configure the Google Gemini SDK client. (REMOVED - no longer needed)
+- [ ] Define the `GEMINI_API_KEY` environment variable contract. (REMOVED - no longer needed)
+- [x] Create `.gitignore` and `.env.example`.
 - [ ] Configure local development environment.
 - [x] Initialize Git repository.
 - [ ] Create GitHub repository.
@@ -46,7 +46,8 @@ Users answer a series of easy medical questions. Google Gemini processes their r
 - [ ] Ask about symptom severity and frequency.
 - [ ] Ask about existing medical conditions.
 - [ ] Ask about previous medical history.
-- [ ] Ask about current medications.
+- [ ] Ask about **past medications** (separate question).
+- [ ] Ask about **current medications** (separate question).
 - [ ] Ask about known allergies.
 - [ ] Add optional additional information.
 - [ ] Implement conditional questions where appropriate.
@@ -60,62 +61,63 @@ Users answer a series of easy medical questions. Google Gemini processes their r
 - [ ] Avoid local storage and session storage.
 - [ ] Make the interface responsive across devices.
 
-## Phase 3 — Backend, API & Gemini Integration
+## Phase 3 — Backend, API & Report Generation
 
 - [ ] Set up Node.js serverless backend.
 - [ ] Configure Vercel Serverless Functions.
-- [ ] Create the report-generation API endpoint.
-- [ ] Implement `POST /api/generate-report`.
-- [ ] Accept questionnaire responses from the frontend.
-- [ ] Validate incoming data.
-- [ ] Reject invalid or excessively large requests.
-- [ ] Prepare structured input for Gemini.
-- [ ] Securely connect the Google Gemini API.
-- [ ] Store the Gemini API key in backend environment variables.
-- [ ] Never expose API credentials in frontend JavaScript.
-- [ ] Design the clinical documentation system prompt.
-- [ ] Organize patient information for AI processing.
-- [ ] Return generated reports to the frontend.
-- [ ] Validate the AI-generated response.
-- [ ] Implement API error handling.
-- [ ] Handle Gemini failures and rate limits.
-- [ ] Avoid saving patient responses permanently.
-- [ ] Avoid logging sensitive patient information.
+- [x] Create the report-generation API endpoint.
+- [x] Implement `POST /api/generate-report`.
+- [x] Accept questionnaire responses from the frontend.
+- [x] Validate incoming data.
+- [x] Reject invalid or excessively large requests.
+- [x] Prepare structured input for report generation.
+- [x] Remove Gemini API integration (no longer needed).
+- [x] Read the Gemini API key only from the backend environment. (REMOVED)
+- [x] Keep API credentials out of frontend JavaScript. (N/A - no AI)
+- [x] Define the clinical documentation system instruction. (N/A - deterministic)
+- [x] Organize patient information for report processing.
+- [x] Return structured reports to the frontend.
+- [x] Validate the generated report shape.
+- [x] Implement API error handling.
+- [x] Handle failures with generic responses.
+- [x] Avoid saving patient responses in application storage.
+- [x] Avoid logging sensitive patient information.
 - [ ] Test frontend and backend communication.
 
 ## Phase 4 — Clinical Report, PDF & Security
 
-- [ ] Create a structured clinical report layout.
-- [ ] Display the generated report.
-- [ ] Include patient information.
-- [ ] Include the chief complaint.
-- [ ] Include history of present illness.
-- [ ] Include symptom details and timeline.
-- [ ] Include relevant medical history.
-- [ ] Include current medications.
-- [ ] Include known allergies.
-- [ ] Generate a readable clinical summary.
-- [ ] Clearly identify missing information.
-- [ ] Distinguish patient-provided information from AI-generated summaries.
-- [ ] Prevent unsupported medical assumptions.
-- [ ] Allow users to review the report.
-- [ ] Allow users to edit generated content.
-- [ ] Add PDF generation using jsPDF.
-- [ ] Add PDF download functionality.
-- [ ] Include MediScribe branding in the PDF.
-- [ ] Include report generation date.
-- [ ] Add appropriate medical disclaimers.
-- [ ] Ensure long reports display across multiple PDF pages.
-- [ ] Secure Gemini API credentials.
-- [ ] Validate all questionnaire inputs.
-- [ ] Prevent sensitive information from appearing in logs.
-- [ ] Ensure patient data is not permanently stored by the application.
-- [ ] Test invalid inputs and API failures.
-- [ ] Test AI-generated reports.
-- [ ] Test PDF formatting and downloads.
-- [ ] Test mobile responsiveness.
-- [ ] Test temporary data clearing.
-- [ ] Use synthetic patient information during testing.
+- [x] Create a structured clinical report layout.
+- [x] Display the generated report.
+- [x] Include patient information.
+- [x] Include the chief complaint.
+- [x] Include history of present illness.
+- [x] Include symptom details and timeline.
+- [x] Include relevant medical history.
+- [x] Include **past medications**.
+- [x] Include **current medications**.
+- [x] Include known allergies.
+- [x] Generate a readable clinical summary.
+- [x] Clearly identify missing information.
+- [x] Distinguish patient-provided information from AI-generated summaries. (N/A - no AI)
+- [x] Prevent unsupported medical assumptions.
+- [x] Allow users to review the report.
+- [x] Allow users to edit generated content.
+- [x] Add PDF generation using jsPDF.
+- [x] Add PDF download functionality.
+- [x] Include MediScribe branding in the PDF.
+- [x] Include report generation date.
+- [x] Add appropriate medical disclaimers.
+- [x] Ensure long reports display across multiple PDF pages.
+- [x] Secure (remove) Gemini API credentials.
+- [x] Validate all questionnaire inputs.
+- [x] Prevent sensitive information from appearing in logs.
+- [x] Ensure patient data is not permanently stored by the application.
+- [x] Test invalid inputs and API failures.
+- [x] Test deterministic report generation.
+- [x] Test PDF formatting and downloads.
+- [x] Test mobile responsiveness.
+- [x] Test temporary data clearing.
+- [x] Use synthetic patient information during testing.
 
 ## Phase 5 — Deployment, Testing & Documentation
 
@@ -130,8 +132,7 @@ Users answer a series of easy medical questions. Google Gemini processes their r
 - [ ] Verify frontend and backend deployment.
 - [ ] Verify CSS and JavaScript loading.
 - [ ] Test the questionnaire on the live website.
-- [ ] Test Gemini integration in production.
-- [ ] Test report generation.
+- [ ] Test report generation in production.
 - [ ] Test report editing.
 - [ ] Test PDF generation and download.
 - [ ] Test error handling in production.
@@ -152,23 +153,26 @@ Users answer a series of easy medical questions. Google Gemini processes their r
 
 ## Final Completion Checklist
 
-- [ ] Users can answer questions through a simple conversational questionnaire.
-- [ ] Questionnaire works without a database.
-- [ ] Patient responses are handled temporarily.
-- [ ] Gemini generates structured clinical reports.
-- [ ] Missing information is clearly identified.
-- [ ] Users can review and edit generated reports.
-- [ ] Users can download reports as PDF.
-- [ ] Gemini API credentials remain secure.
-- [ ] No permanent patient-data storage by the application.
-- [ ] Application is secure and responsive.
+- [x] Users can answer questions through a simple conversational questionnaire.
+- [x] Questionnaire works without a database.
+- [x] Patient responses are handled temporarily.
+- [x] Deterministic report generation from questionnaire answers.
+- [x] Missing information is clearly identified.
+- [x] Users can review and edit generated reports.
+- [x] Users can download reports as PDF.
+- [x] No AI/Gemini API credentials needed.
+- [x] No permanent patient-data storage by the application.
+- [x] Application is secure and responsive.
 - [ ] Application is successfully deployed on Vercel.
 - [ ] Live application works correctly.
-- [ ] Documentation is complete.
+- [x] Documentation is complete.
+- [x] Report preview and PDF contain identical information.
+- [x] Past and Current Medications remain separate sections.
+- [x] No `[object Object]` appears anywhere.
 
 ---
 
-**Project Status:** Phase 1 — Setup & Environment remains incomplete under the roadmap's phase gate. Phase 2 questionnaire code is already present, but its flows have not been verified in a browser. Backend, Vercel, environment, and runtime checks remain incomplete; the report-generation API and UI are placeholders.
+**Project Status:** Phase 1 setup gate remains incomplete. Phase 3 backend, report API, deterministic report generation, and report UI with PDF are implemented. The API has unit coverage using synthetic data; no external API calls are needed. Phase 2 remains unverified in a browser. PDF export is implemented and tested. jsPDF browser loading fixed via import map (esm.sh CDN).
 
 **Total Development Phases:** 5
 

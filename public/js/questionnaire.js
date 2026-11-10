@@ -134,33 +134,41 @@ export const QUESTIONS = [
     section: "Symptoms"
   },
 
-  // 8. Past and current medications – single-choice radio
+  // 8. Past Medications
   {
-    id: "medications",
-    label: "Past and current medications",
+    id: "past_medications",
+    label: "Have you taken any medications in the past?",
     required: false,
     type: "radio",
     options: [
-      { value: "No previous medications", label: "No previous medications" },
-      { value: "Yes, I have taken medications before", label: "Yes, I have taken medications before" },
-      { value: "Not taking any medication", label: "Not taking any medication" },
-      { value: "Yes, currently taking medication", label: "Yes, currently taking medication" },
-      { value: "Not sure", label: "Not sure" },
-      { value: "Other", label: "Other" }
+      { value: "Yes", label: "Yes" },
+      { value: "No", label: "No" }
     ],
     conditionalFields: [
       {
-        id: "medications_details",
-        placeholder: "Please specify the medications",
-        triggerValues: [
-          "Yes, I have taken medications before",
-          "Yes, currently taking medication"
-        ]
-      },
+        id: "past_medications_details",
+        placeholder: "Enter the medication name and relevant details...",
+        triggerValues: ["Yes"]
+      }
+    ],
+    section: "Medical Background"
+  },
+
+  // 9. Current Medications
+  {
+    id: "current_medications",
+    label: "Are you currently taking any medications?",
+    required: false,
+    type: "radio",
+    options: [
+      { value: "Yes", label: "Yes" },
+      { value: "No", label: "No" }
+    ],
+    conditionalFields: [
       {
-        id: "medications_other",
-        placeholder: "Please describe your answer",
-        triggerValues: ["Other"]
+        id: "current_medications_details",
+        placeholder: "Enter your current medication name and relevant details...",
+        triggerValues: ["Yes"]
       }
     ],
     section: "Medical Background"
@@ -177,7 +185,11 @@ export const QUESTIONS = [
       { value: "Yes, I have allergies", label: "Yes, I have allergies" },
       { value: "Not sure", label: "Not sure" }
     ],
-    otherField: { id: "allergies_other", placeholder: "Specify allergies" },
+    otherField: {
+      id: "allergies_other",
+      placeholder: "Specify allergies",
+      triggerValues: ["Yes, I have allergies"]
+    },
     section: "Medical Background"
   },
 
@@ -358,7 +370,8 @@ function renderQuestion(idx) {
 
       // Show/hide based on selection
       group.addEventListener("change", () => {
-        if (getValue() === "Other") {
+        const triggerValues = q.otherField.triggerValues || ["Other"];
+        if (triggerValues.includes(getValue())) {
           otherDiv.style.display = "block";
         } else {
           otherDiv.style.display = "none";
@@ -367,7 +380,8 @@ function renderQuestion(idx) {
       });
 
       // Pre‑fill and ensure visibility if previously saved as "Other"
-      if (answers[q.id] === "Other") {
+      const triggerValues = q.otherField.triggerValues || ["Other"];
+      if (triggerValues.includes(answers[q.id])) {
         otherDiv.style.display = "block";
         const stored = answers[q.otherField.id] ?? "";
         otherInput.value = stored;
@@ -470,12 +484,15 @@ function renderQuestion(idx) {
     slider.min = q.severity.min;
     slider.max = q.severity.max;
     slider.step = q.severity.step;
-    slider.value = answers[q.id] ? answers[q.id].severity : 5;
+    let severityProvided =
+      answers[q.id]?.severity !== undefined && answers[q.id]?.severity !== null;
+    slider.value = severityProvided ? answers[q.id].severity : 5;
     slider.id = `slider-${q.id}`;
     const sevValue = document.createElement("span");
     sevValue.style.marginLeft = "0.5rem";
-    sevValue.textContent = slider.value;
+    sevValue.textContent = severityProvided ? slider.value : "Not selected";
     slider.addEventListener("input", () => {
+      severityProvided = true;
       sevValue.textContent = slider.value;
     });
     sliderContainer.appendChild(slider);
@@ -486,7 +503,10 @@ function renderQuestion(idx) {
       const checked = card.querySelector(`input[name='${name}']:checked`);
       return checked ? checked.value : "";
     };
-    getValue = () => ({ onset: getOnset(), severity: Number(slider.value) });
+    getValue = () => ({
+      onset: getOnset(),
+      severity: severityProvided ? Number(slider.value) : null
+    });
     focusEl = slider;
   } else if (q.type === "dual") {
     // Two sub‑sections, each with its own options (checkboxes)
@@ -638,6 +658,7 @@ function renderQuestion(idx) {
         if (!val) { err.textContent = "Please select an option."; return; }
       } else if (q.type === "mixed") {
         if (!val.onset) { err.textContent = "Please select when it started."; return; }
+        if (val.severity === null) { err.textContent = "Please select a severity score."; return; }
         if (val.severity < q.severity.min || val.severity > q.severity.max) { err.textContent = "Severity out of range."; return; }
       }
     }

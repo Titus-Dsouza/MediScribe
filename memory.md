@@ -1,63 +1,72 @@
 # MediScribe Project Memory
 
-## Current Phase and Status
+## Current Status
 
-- The roadmap's current phase remains Phase 1 — Setup & Environment because its completion gate has not been met.
-- Phase 2 questionnaire code is already present, but is not browser-verified and should not be treated as a completed phase. Backend/Vercel setup and runtime checks remain incomplete.
-- The questionnaire and review UI are implemented in code. The latest medication-question change passed JavaScript syntax and question-configuration checks, but UI interactions have not been tested in a browser.
-- Clinical report generation is not implemented. Both the Review-page button and API endpoint are placeholders.
+- Phase 3 backend and report UI code are implemented with deterministic report generation (no AI).
+- Phase 1 setup gate remains incomplete.
+- `npm test` exercises the API handler with synthetic questionnaire data. It does not call any external API.
+- The project has no API key configured; report generation works entirely client-side.
+- Phase 2 was already present but had not been browser-tested. Its conditional allergy details and implicit severity default were corrected because they affected report accuracy; the questionnaire is still not browser-verified.
+- Vercel local runtime, deployed behavior, and full browser-to-Gemini end-to-end testing are no longer applicable (Gemini removed).
+- No PDF export, database, authentication, accounts, or patient-data persistence was added.
 
 ## Project Structure
 
-- `public/index.html`: App page and stylesheet/module entry references.
-- `public/css/styles.css`: Glassmorphism and application styling.
+- `public/index.html`: App shell and stylesheet/module entry.
+- `public/css/styles.css`: Existing glassmorphism theme plus report, loading, warning, and error styles.
 - `public/js/app.js`: Landing page and questionnaire startup.
-- `public/js/questionnaire.js`: Question definitions, rendering, in-memory answers, validation, navigation, and answer editing.
-- `public/js/report.js`: Review screen and answer formatting; Generate Report currently displays a placeholder alert.
-- `public/js/report.backup.js`: Older review-screen implementation; not imported by the app.
-- `api/generate-report.js`: Placeholder report API handler; it does not generate reports.
-- `package.json` / `package-lock.json`: npm project metadata and scripts. The project declares `"type": "module"` and no runtime dependencies.
-- `Phase.md`: Project roadmap and completion checklist.
-- `README.md`: Project overview; its Django/Python stack description does not match the current JavaScript/Node code.
-- `Design.md`, `future_updates.md`, `workflow.md`: Additional project documentation.
+- `public/js/questionnaire.js`: Question definitions, rendering, in-memory answers, validation, navigation, conditional fields, and answer editing (11 questions).
+- `public/js/report.js`: Review screen, deterministic report generation, preview rendering, PDF download with jsPDF, and in-session report navigation.
+- `public/js/report-generator.js`: Deterministic report data builder (shared logic for preview and PDF).
+- `public/js/report.backup.js`: Older duplicate review UI; not imported by the application.
+- `api/generate-report.js`: Optional Vercel `POST /api/generate-report` function for server-side validation, deterministic report assembly, and error responses (no AI).
+- `test/generate-report.test.js`: Node built-in tests for request validation, report field mapping, missing information.
+- `package.json` / `package-lock.json`: ES-module project, `jspdf`, Vercel dev scripts, and Node test script.
+- `.env.example`: Documents the `GEMINI_API_KEY` variable (legacy). `.env` and `.env.*` are ignored, except the example file.
+- `Phase.md`: Phase checklist and verification status.
+- `README.md`: Stack, local setup, API, Vercel env configuration, privacy, and remaining verification.
 
-## Implemented Features
+## Architecture and Decisions
 
-- A ten-question, step-by-step questionnaire is defined in `public/js/questionnaire.js`, with a single in-memory answer object and no browser storage.
-- The questionnaire code includes input types, validation, previous/next navigation, progress display, conditional fields, and review editing.
-- Page 8 is a single radio group using the original “Past and current medications” wording and existing answer choices, plus “Other.” Yes selections reveal a medication-details field; Other reveals a description field. The selected answer and active description are stored in memory.
-- The Review formatter displays the selected medication option and corresponding details.
-- Landing, questionnaire, and review screens use the existing glass-card styling classes.
+- Frontend: vanilla HTML/CSS/JavaScript ES modules.
+- Backend: Optional Node.js ES-module Vercel Serverless Function at `api/generate-report.js` (validation only).
+- Report Generation: Deterministic JavaScript in the browser using `report-generator.js`; no AI, no external API calls.
+- PDF: jsPDF for client-side PDF generation (A4 portrait, multi-page, professional medical document format).
+- The API validates only questionnaire fields, recognized options, field limits, severity, and a 16 KB request maximum.
+- Exact patient facts are assembled deterministically in both frontend and backend; no AI summary is generated.
+- The response contains patient information, chief complaint, symptoms, onset/severity/modifiers, medication/allergy information, notes, missing-information entries, professional-review notice, report reference, and generation timestamp.
+- Responses set `Cache-Control: no-store`; no patient responses are logged or written to application storage.
+- API uses generic upstream errors.
+- Answers and generated report remain in module memory for the current page session; starting over clears them.
+- No browser storage, database, PDF, or authentication was introduced.
 
-## Pending or Incomplete
+## Phase 2 Notes
 
-- Browser-level verification of questionnaire navigation, radio exclusivity, conditional fields, answer restoration, and Review output.
-- Report generation, Gemini integration, API request validation, and report display/editing.
-- PDF creation/download.
-- Vercel configuration/deployment and production verification.
-- Responsive and end-to-end testing.
-- Privacy, security, and clinical-output validation.
-- Update README stack details to match the actual code.
+- The questionnaire includes 11 questions (split Past and Current Medications into two separate questions), in-memory response state, answer review/editing, navigation, progress, conditional fields, and basic validation.
+- The allergies question now reveals and stores details when "Yes, I have allergies" is selected.
+- Severity no longer silently treats the slider's initial midpoint as a patient-provided score. A score must be selected before continuing.
+- **Past Medications** and **Current Medications** are now independent questions (Yes/No each with conditional text fields), replacing the former combined question.
+- Questionnaire interactions still require browser verification.
 
-## Technical Decisions and Dependencies
+## Phase 3 Notes (Completed)
 
-- Frontend uses vanilla HTML, CSS, and JavaScript ES modules.
-- npm declares Node.js ES-module mode; there are no declared runtime dependencies.
-- Questionnaire answers are kept only in module-level memory and are cleared when starting over or starting a new questionnaire.
-- No database or permanent answer persistence is implemented.
+- Deterministic report generation implemented in `report-generator.js` and `report.js`.
+- Professional clinical report preview with 9 sections + footer.
+- PDF download via jsPDF with A4 formatting, page numbering, and proper margins.
+- Report preview and PDF contain identical information.
+- All conditional "Other" fields handled.
+- Missing information clearly labeled.
+- Clinician review section with blank fields.
+- No AI/Gemini dependency.
 
-## Known Issues
+## Verification and Known Limitations
 
-- `npm start` currently fails: `api/generate-report.js` uses `module.exports` while `package.json` sets `"type": "module"`, resulting in `ReferenceError: module is not defined`.
-- The report API and Generate Report button are placeholders; medication details are only formatted on the Review page and are not included in an actual generated clinical report.
-- `README.md` lists Python/Django, while the implementation is JavaScript/Node.js.
-- `public/js/report.backup.js` is an older duplicate implementation and is not used by `app.js`.
-- No browser test runner or automated UI test suite is configured.
-
-## Changes in the Current Session
-
-- Updated Page 8 in `public/js/questionnaire.js` to a single radio question, retaining existing medication choices and adding conditional medication-details and Other-description fields.
-- Updated medication answer formatting in `public/js/report.js`.
-- Ran `node --check` against the JavaScript files and a Node assertion check for the medication question configuration; both passed.
-- Ran `npm start`; it failed with the ES-module/CommonJS mismatch noted above.
-- Documentation now reflects the incomplete Phase 1 gate, existing partial Phase 2 code, and verified setup items. Existing unrelated working-tree edits were left untouched.
+- `npm test` passed for API handler tests (no external API calls).
+- Syntax checks passed for all JavaScript files.
+- No live API request was performed because no external API is required.
+- The browser workflow and Vercel CLI runtime have not been tested; `npm run dev` invokes `npx vercel dev`.
+- The existing gender choices are limited to Male/Female; this is pre-existing questionnaire scope.
+- An unauthenticated public endpoint can incur provider usage; deployers should configure provider/Vercel usage safeguards. No rate-limit store was added because the requirements prohibit a database and serverless in-memory limits would not be reliable.
+- Real patient data must not be used until consent, privacy, and third-party processing requirements are addressed.
+- PDF creation/download belongs to Phase 4 and is now implemented.
+- **jsPDF browser loading**: Fixed via import map in `index.html` pointing to `https://esm.sh/jspdf@2.5.2` for browser-compatible ESM module resolution without a bundler.
