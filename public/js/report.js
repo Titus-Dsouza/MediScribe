@@ -714,7 +714,9 @@ export function renderReview(errorMessage = "") {
   heading.textContent = "Review Your Answers";
   card.appendChild(heading);
 
-  if (errorMessage) {
+  // Only display error banner for actual string error messages,
+  // not for the answers object passed from questionnaire completion
+  if (typeof errorMessage === "string" && errorMessage.trim()) {
     const error = document.createElement("p");
     error.className = "report-error";
     error.setAttribute("role", "alert");

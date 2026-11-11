@@ -56,6 +56,19 @@ function formatOptions(value, otherText) {
 }
 
 /**
+ * Safely convert any value to a string for display.
+ * Handles objects by returning a meaningful representation instead of "[object Object]".
+ */
+export function toDisplayString(value) {
+  if (value === null || value === undefined) return "";
+  if (typeof value === "object") {
+    if (Array.isArray(value)) return value.map(toDisplayString).join(", ");
+    return "";
+  }
+  return String(value);
+}
+
+/**
  * Format a single answer for display
  */
 export function formatAnswer(id, answers) {
